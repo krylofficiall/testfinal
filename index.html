@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Quest — шаблон кейсов</title>
+  <style>
+    :root{
+      --bg:#f6f8ff;
+      --card:#ffffff;
+      --ink:#13233f;
+      --muted:#607099;
+      --line:#e5ebff;
+      --brand:#5b6cff;
+      --brand2:#7c4dff;
+      --accent:#20c997;
+      --warn:#ffb547;
+      --danger:#ff6b6b;
+      --shadow:0 20px 50px rgba(58,74,163,.12);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:radial-gradient(circle at top, #eef3ff 0%, var(--bg) 35%, #eef1ff 100%);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink)}
+    body{min-height:100vh}
+    .wrap{max-width:1200px;margin:0 auto;padding:24px}
+    .hero{
+      background:linear-gradient(135deg, #5b6cff 0%, #7c4dff 55%, #20c997 100%);
+      color:#fff;border-radius:32px;padding:28px;box-shadow:var(--shadow);position:relative;overflow:hidden
+    }
+    .hero:before,.hero:after{
+      content:"";position:absolute;border-radius:999px;background:rgba(255,255,255,.12);filter:blur(2px)
+    }
+    .hero:before{width:220px;height:220px;right:-60px;top:-70px}
+    .hero:after{width:140px;height:140px;left:20px;bottom:-40px}
+    .hero h1{margin:0 0 8px;font-size:clamp(28px,4vw,46px);line-height:1.05}
+    .hero p{margin:0;max-width:900px;font-size:16px;opacity:.95}
+    .pillrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+    .pill{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px);padding:10px 14px;border-radius:999px;font-size:14px}
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;margin-top:18px}
+    .card{
+      background:rgba(255,255,255,.82);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.55);
+      border-radius:var(--radius);box-shadow:var(--shadow);padding:20px
+    }
+    .card h2,.card h3{margin:0 0 10px}
+    .sub{color:var(--muted);margin:0 0 16px;line-height:1.5}
+    .info{
+      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px
+    }
+    label{display:block;font-size:13px;font-weight:700;margin:0 0 6px;color:#31416e}
+    input,textarea,select{
+      width:100%;border:1px solid #dce3ff;border-radius:16px;padding:14px 14px;background:#fff;
+      color:var(--ink);font-size:15px;outline:none;transition:.2s ease;box-shadow:0 0 0 0 rgba(91,108,255,.0)
+    }
+    textarea{min-height:110px;resize:vertical;line-height:1.5}
+    input:focus,textarea:focus,select:focus{border-color:var(--brand);box-shadow:0 0 0 4px rgba(91,108,255,.12)}
+    .wide{grid-column:1 / -1}
+    .section-title{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;margin:28px 0 12px
+    }
+    .section-title h2{margin:0;font-size:22px}
+    .tag{padding:8px 12px;border-radius:999px;background:#eef2ff;color:#3d4ea0;font-size:13px;font-weight:700}
+    .canvas-box{
+      border:2px dashed #cfd8ff;border-radius:24px;background:linear-gradient(180deg,#fff,#f8faff);
+      padding:16px;position:relative;overflow:hidden
+    }
+    .canvas-tools{
+      display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;align-items:center
+    }
+    .btn{
+      border:none;border-radius:14px;padding:12px 16px;font-weight:800;cursor:pointer;
+      transition:.2s ease;font-size:14px
+    }
+    .btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+    .btn.secondary{background:#eef2ff;color:#30428f}
+    .btn.ghost{background:#fff;border:1px solid #dbe2ff;color:#31416e}
+    .btn:hover{transform:translateY(-1px)}
+    .hint{font-size:13px;color:var(--muted);line-height:1.4}
+    .cases{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .case{
+      background:#fff;border-radius:24px;padding:18px;border:1px solid #e6ebff;box-shadow:var(--shadow)
+    }
+    .case-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .case-badge{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#ffb547,#ff6b6b);color:#fff;font-weight:900}
+    .mini{font-size:12px;color:var(--muted);line-height:1.5}
+    .stack{display:grid;gap:10px}
+    .ref-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .bottom-actions{
+      display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;margin-top:18px
+    }
+    .check{
+      display:flex;gap:10px;align-items:flex-start;background:#f4f7ff;border:1px solid #dee5ff;padding:14px 16px;border-radius:18px
+    }
+    .check input{width:auto;margin-top:3px}
+    .footer-note{font-size:13px;color:var(--muted);line-height:1.5}
+    .sticky{
+      position:sticky;bottom:16px;z-index:3;margin-top:18px
+    }
+    .savebar{
+      background:rgba(19,35,63,.92);color:#fff;border-radius:22px;padding:14px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;box-shadow:var(--shadow)
+    }
+    .savebar p{margin:0;font-size:14px;opacity:.95}
+    .savebar .btn{white-space:nowrap}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    @media (max-width: 980px){
+      .grid,.cases,.info,.ref-grid{grid-template-columns:1fr}
+      .wrap{padding:14px}
+      .hero{padding:22px}
+    }
+    @media print{
+      .sticky,.canvas-tools,.btn{display:none !important}
+      body{background:#fff}
+      .card,.hero,.case{box-shadow:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Project Quest: заполни свой проект из 3 кейсов</h1>
+      <p>
+        Этот шаблон помогает ребёнку самостоятельно собрать итоговый проект за одно занятие:
+        увидеть проблему на карте пользовательского опыта, сформулировать три кейса, придумать решение,
+        указать референсы и описать ожидаемый результат.
+      </p>
+      <div class="pillrow">
+        <div class="pill">Пользовательская история</div>
+        <div class="pill">Факт из тестирования</div>
+        <div class="pill">Решение</div>
+        <div class="pill">Ожидаемый результат</div>
+        <div class="pill">Сохранение в TXT</div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Информация о проекте</h2>
+        <p class="sub">
+          Заполни общую шапку проекта. Можно кратко описать тему, аудиторию и название итоговой идеи.
+        </p>
+        <div class="info">
+          <div>
+            <label for="projectName">Название проекта</label>
+            <input id="projectName" placeholder="Например: VR Racing Helper" />
+          </div>
+          <div>
+            <label for="author">Имя ученика / команды</label>
+            <input id="author" placeholder="Имя" />
+          </div>
+          <div class="wide">
+            <label for="theme">Тема и цель урока</label>
+            <textarea id="theme" placeholder="Например: Улучшить первый опыт в VR-игре для новичков и сделать обучение понятнее"></textarea>
+          </div>
+          <div class="wide">
+            <div class="check">
+              <input id="present" type="checkbox" />
+              <div>
+                <strong>Финал урока:</strong>
+                <div class="mini">
+                  Проект будет показан преподавателю и группе. Можно дорабатывать идеи вместе на финальном разборе.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Правило работы</h2>
+        <p class="sub">
+          Дети могут заполнять этот шаблон прямо в приложении, а схемы и рисунки можно также делать отдельно:
+          на листочке, в бумажном скетче или в любом удобном инструменте.
+        </p>
+        <div class="stack">
+          <div class="check">
+            <input id="rule1" type="checkbox" />
+            <div class="mini">1. Сначала отмечаем, где у пользователя появляется негативная реакция.</div>
+          </div>
+          <div class="check">
+            <input id="rule2" type="checkbox" />
+            <div class="mini">2. Потом формулируем 3 кейса: проблема, факт, решение, результат.</div>
+          </div>
+          <div class="check">
+            <input id="rule3" type="checkbox" />
+            <div class="mini">3. В конце сравниваем старую и новую эмоцию пользователя на графике.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="section-title">
+      <h2>Карта пользовательского поведения</h2>
+      <span class="tag">ось X: этапы / время · ось Y: настроение</span>
+    </div>
+
+    <section class="card">
+      <p class="sub">
+        Нарисуй или опиши карту пользовательского опыта. Важно показать точку, где тестирование выявило негативную реакцию,
+        и отметить комментарий: <strong>используйте данные из прошлых тестирований</strong>.
+      </p>
+      <div class="canvas-box">
+        <div class="canvas-tools">
+          <button class="btn primary" type="button" onclick="addPoint()">Добавить точку</button>
+          <button class="btn secondary" type="button" onclick="resetPoints()">Сбросить точки</button>
+          <button class="btn ghost" type="button" onclick="addMoodLine()">Показать улучшение</button>
+          <span class="hint">Подсказка: можно использовать этот блок как схему или просто подробно описать её ниже.</span>
+        </div>
+        <svg id="chart" viewBox="0 0 1000 420" width="100%" height="420" style="display:block;border-radius:18px;background:linear-gradient(180deg,#ffffff,#f7f9ff)">
+          <defs>
+            <linearGradient id="gridGlow" x1="0" x2="1">
+              <stop offset="0%" stop-color="#eef2ff"/>
+              <stop offset="100%" stop-color="#dbe4ff"/>
+            </linearGradient>
+          </defs>
+          <g stroke="url(#gridGlow)" stroke-width="1">
+            <line x1="90" y1="60" x2="90" y2="350"/>
+            <line x1="90" y1="350" x2="940" y2="350"/>
+            <line x1="90" y1="60" x2="940" y2="60" opacity=".35"/>
+            <line x1="90" y1="108" x2="940" y2="108" opacity=".2"/>
+            <line x1="90" y1="156" x2="940" y2="156" opacity=".2"/>
+            <line x1="90" y1="204" x2="940" y2="204" opacity=".2"/>
+            <line x1="90" y1="252" x2="940" y2="252" opacity=".2"/>
+            <line x1="90" y1="300" x2="940" y2="300" opacity=".2"/>
+            <line x1="230" y1="60" x2="230" y2="350" opacity=".2"/>
+            <line x1="370" y1="60" x2="370" y2="350" opacity=".2"/>
+            <line x1="510" y1="60" x2="510" y2="350" opacity=".2"/>
+            <line x1="650" y1="60" x2="650" y2="350" opacity=".2"/>
+            <line x1="790" y1="60" x2="790" y2="350" opacity=".2"/>
+          </g>
+          <text x="30" y="75" fill="#3a4c85" font-size="16" font-weight="700">Настроение</text>
+          <text x="840" y="385" fill="#3a4c85" font-size="16" font-weight="700">Время / этапы</text>
+          <text x="98" y="46" fill="#6a78aa" font-size="12">очень плохо</text>
+          <text x="98" y="372" fill="#6a78aa" font-size="12">очень хорошо</text>
+          <text x="820" y="370" fill="#6a78aa" font-size="12">прошлое → будущее</text>
+          <path id="trend" d="" fill="none" stroke="#5b6cff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <g id="points"></g>
+          <g id="labels"></g>
+        </svg>
+      </div>
+      <div style="margin-top:14px">
+        <label for="chartNote">Комментарий к карте</label>
+        <textarea id="chartNote" placeholder="Например: Используйте данные из прошлых тестирований. Отметьте точку, где пользователь начинает испытывать негатив, и объясните, почему это важно исправить."></textarea>
+      </div>
+    </section>
+
+    <div class="section-title">
+      <h2>Три кейса</h2>
+      <span class="tag">каждый кейс = проблема + факт + решение + результат</span>
+    </div>
+
+    <section class="cases">
+      <article class="case">
+        <div class="case-top">
+          <h3>Кейс 1</h3>
+          <div class="case-badge">1</div>
+        </div>
+        <div class="stack">
+          <div>
+            <label>Проблема</label>
+            <textarea placeholder="Я как ... хочу ... чтобы ..."></textarea>
+          </div>
+          <div>
+            <label>Факт из тестирования</label>
+            <textarea placeholder="Пользовательская история не выполняется так как ..."></textarea>
+          </div>
+          <div>
+            <label>Решение: повтори user story</label>
+            <textarea placeholder="Я как ... хочу ... чтобы ..."></textarea>
+          </div>
+          <div>
+            <label>Описание решения</label>
+            <textarea placeholder="Как можно исправить проблему? Здесь можно подробно описать механику, интерфейс или нарисовать схему отдельно."></textarea>
+          </div>
+          <div class="ref-grid">
+            <div>
+              <label>Ссылка на референс 1</label>
+              <input placeholder="https://..." />
+            </div>
+            <div>
+              <label>Ссылка на референс 2</label>
+              <input placeholder="https://..." />
+            </div>
+          </div>
+          <div>
+            <label>Планируемый результат</label>
+            <textarea placeholder="Покажи, как эмоция пользователя станет лучше и где на графике это видно."></textarea>
+          </div>
+        </div>
+      </article>
+
+      <article class="case">
+        <div class="case-top">
+          <h3>Кейс 2</h3>
+          <div class="case-badge">2</div>
+        </div>
+        <div class="stack">
+          <div>
+            <label>Проблема</label>
+            <textarea placeholder="Я как ... хочу ... чтобы ..."></textarea>
+          </div>
+          <div>
+            <label>Факт из тестирования</label>
+            <textarea placeholder="Пользовательская история не выполняется так как ..."></textarea>
+          </div>
+          <div>
+            <label>Решение: повтори user story</label>
+            <textarea placeholder="Я как ... хочу ... чтобы ..."></textarea>
+          </div>
+          <div>
+            <label>Описание решения</label>
+            <textarea placeholder="Как можно исправить проблему? Здесь можно подробно описать механику, интерфейс или нарисовать схему отдельно."></textarea>
+          </div>
+          <div class="ref-grid">
+            <div>
+              <label>Ссылка на референс 1</label>
+              <input placeholder="https://..." />
+            </div>
+            <div>
+              <label>Ссылка на референс 2</label>
+              <input placeholder="https://..." />
+            </div>
+          </div>
+          <div>
+            <label>Планируемый результат</label>
+            <textarea placeholder="Покажи, как эмоция пользователя станет лучше и где на графике это видно."></textarea>
+          </div>
+        </div>
+      </article>
+
+      <article class="case">
+        <div class="case-top">
+          <h3>Кейс 3</h3>
+          <div class="case-badge">3</div>
+        </div>
+        <div class="stack">
+          <div>
+            <label>Проблема</label>
+            <textarea placeholder="Я как ... хочу ... чтобы ..."></textarea>
+          </div>
+          <div>
+            <label>Факт из тестирования</label>
+            <textarea placeholder="Пользовательская история не выполняется так как ..."></textarea>
+          </div>
+          <div>
+            <label>Решение: повтори user story</label>
+            <textarea placeholder="Я как ... хочу ... чтобы ..."></textarea>
+          </div>
+          <div>
+            <label>Описание решения</label>
+            <textarea placeholder="Как можно исправить проблему? Здесь можно подробно описать механику, интерфейс или нарисовать схему отдельно."></textarea>
+          </div>
+          <div class="ref-grid">
+            <div>
+              <label>Ссылка на референс 1</label>
+              <input placeholder="https://..." />
+            </div>
+            <div>
+              <label>Ссылка на референс 2</label>
+              <input placeholder="https://..." />
+            </div>
+          </div>
+          <div>
+            <label>Планируемый результат</label>
+            <textarea placeholder="Покажи, как эмоция пользователя станет лучше и где на графике это видно."></textarea>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <div class="section-title">
+      <h2>Итоговый комментарий</h2>
+      <span class="tag">что изменится для пользователя</span>
+    </div>
+
+    <section class="card">
+      <p class="sub">
+        Здесь можно кратко объяснить, почему выбранные решения делают опыт лучше. При необходимости ребёнок может
+        отдельно чертить, рисовать или дополнять проект другими инструментами — это допускается.
+      </p>
+      <textarea id="finalNote" placeholder="Например: после доработки пользователь быстрее понимает интерфейс, реже ошибается и испытывает больше удовольствия на каждом этапе."></textarea>
+
+      <div class="bottom-actions">
+        <div class="footer-note">
+          Важно: в конце урока дети представляют проекты, а преподаватель помогает вместе разобрать идеи и довести их до сильного результата.
+        </div>
+        <button class="btn primary" type="button" onclick="saveTXT()">Сохранить итог в TXT</button>
+      </div>
+    </section>
+
+    <div class="sticky">
+      <div class="savebar">
+        <p>Готово к сохранению: нажми кнопку и получишь текстовый файл с полным содержимым шаблона.</p>
+        <button class="btn secondary" type="button" onclick="saveTXT()">Сохранить TXT</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const svg = document.getElementById('chart');
+    const trend = document.getElementById('trend');
+    const points = document.getElementById('points');
+    const labels = document.getElementById('labels');
+
+    let samplePoints = [
+      {x:130, y:260, name:'Старт', color:'#ff6b6b'},
+      {x:300, y:230, name:'Тест 1', color:'#ffb547'},
+      {x:500, y:280, name:'Проблема', color:'#ff4d8d'},
+      {x:700, y:160, name:'Решение', color:'#20c997'},
+      {x:880, y:110, name:'Финал', color:'#5b6cff'},
+    ];
+
+    function render(){
+      points.innerHTML = '';
+      labels.innerHTML = '';
+      trend.setAttribute('d', samplePoints.map((p,i)=>(i===0?'M':'L')+p.x+','+p.y).join(' '));
+      samplePoints.forEach((p,i)=>{
+        const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        c.setAttribute('cx', p.x); c.setAttribute('cy', p.y); c.setAttribute('r', 11);
+        c.setAttribute('fill', p.color); c.setAttribute('stroke', '#fff'); c.setAttribute('stroke-width', '4');
+        points.appendChild(c);
+
+        const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+        t.setAttribute('x', p.x + 14);
+        t.setAttribute('y', p.y - 14);
+        t.setAttribute('fill', '#31416e');
+        t.setAttribute('font-size', '13');
+        t.setAttribute('font-weight', '700');
+        t.textContent = p.name;
+        labels.appendChild(t);
+      });
+    }
+
+    function addPoint(){
+      const x = 140 + Math.round(Math.random()*760);
+      const y = 90 + Math.round(Math.random()*240);
+      samplePoints.splice(samplePoints.length - 1, 0, {
+        x, y,
+        name: 'Точка',
+        color: '#7c4dff'
+      });
+      samplePoints = samplePoints.sort((a,b)=>a.x-b.x);
+      render();
+    }
+
+    function resetPoints(){
+      samplePoints = [
+        {x:130, y:260, name:'Старт', color:'#ff6b6b'},
+        {x:300, y:230, name:'Тест 1', color:'#ffb547'},
+        {x:500, y:280, name:'Проблема', color:'#ff4d8d'},
+        {x:700, y:160, name:'Решение', color:'#20c997'},
+        {x:880, y:110, name:'Финал', color:'#5b6cff'},
+      ];
+      render();
+    }
+
+    function addMoodLine(){
+      samplePoints = [
+        {x:130, y:290, name:'Негатив', color:'#ff6b6b'},
+        {x:320, y:250, name:'Поиск', color:'#ffb547'},
+        {x:520, y:210, name:'Исправление', color:'#20c997'},
+        {x:710, y:150, name:'Лучше', color:'#5b6cff'},
+        {x:890, y:95, name:'Отлично', color:'#7c4dff'},
+      ];
+      render();
+    }
+
+    function collectText(){
+      const fields = [
+        ['Название проекта', 'projectName'],
+        ['Имя ученика / команды', 'author'],
+        ['Тема и цель урока', 'theme'],
+        ['Карта пользовательского поведения', 'chartNote'],
+        ['Итоговый комментарий', 'finalNote'],
+      ];
+      let txt = '';
+      fields.forEach(([title,id])=>{
+        const el = document.getElementById(id);
+        txt += title + ':\n' + (el.value || '') + '\n\n';
+      });
+      txt += 'Правила отмечены:\n';
+      txt += `- Сначала отмечаем проблему: ${document.getElementById('rule1').checked ? 'да' : 'нет'}\n`;
+      txt += `- Три кейса: ${document.getElementById('rule2').checked ? 'да' : 'нет'}\n`;
+      txt += `- Сравнение эмоции на графике: ${document.getElementById('rule3').checked ? 'да' : 'нет'}\n`;
+      txt += `- Финал урока представлен: ${document.getElementById('present').checked ? 'да' : 'нет'}\n`;
+      return txt;
+    }
+
+    function saveTXT(){
+      const text = collectText();
+      const blob = new Blob([text], {type: 'text/plain;charset=utf-8'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'project-quest-result.txt';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=>URL.revokeObjectURL(a.href), 500);
+    }
+
+    render();
+  </script>
+</body>
+</html>
