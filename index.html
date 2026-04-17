@@ -101,8 +101,25 @@
     .savebar p{margin:0;font-size:14px;opacity:.95}
     .savebar .btn{white-space:nowrap}
     .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    .quiz{
+      display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-top:14px
+    }
+    .metric{
+      background:#f7f9ff;border:1px solid #e0e6ff;border-radius:18px;padding:14px
+    }
+    .metric-value{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px
+    }
+    .range{
+      width:100%
+    }
+    .spark{
+      width:100%;height:120px;border-radius:18px;background:linear-gradient(180deg,#fdfdff,#f2f5ff);
+      border:1px solid #e0e6ff
+    }
+    .small-note{font-size:12px;color:var(--muted);line-height:1.45}
     @media (max-width: 980px){
-      .grid,.cases,.info,.ref-grid{grid-template-columns:1fr}
+      .grid,.cases,.info,.ref-grid,.quiz{grid-template-columns:1fr}
       .wrap{padding:14px}
       .hero{padding:22px}
     }
@@ -189,20 +206,51 @@
 
     <div class="section-title">
       <h2>Карта пользовательского поведения</h2>
-      <span class="tag">ось X: этапы / время · ось Y: настроение</span>
+      <span class="tag">drag & drop · ось X: этапы / время · ось Y: настроение</span>
     </div>
 
     <section class="card">
       <p class="sub">
-        Нарисуй или опиши карту пользовательского опыта. Важно показать точку, где тестирование выявило негативную реакцию,
-        и отметить комментарий: <strong>используйте данные из прошлых тестирований</strong>.
+        Сначала ответь: сколько этапов в приложении? Потом оцени, как пользователь чувствовал себя на каждом этапе,
+        и перетаскивай точки мышкой или пальцем. Используйте данные из прошлых тестирований.
       </p>
-      <div class="canvas-box">
+
+      <div class="quiz">
+        <div class="metric">
+          <div class="metric-value">
+            <label style="margin:0">Сколько этапов в приложении?</label>
+            <span class="mono" id="stepsLabel">5</span>
+          </div>
+          <input class="range" id="stepsCount" type="range" min="3" max="8" value="5" />
+          <div class="small-note">
+            После изменения количества этапов нажми «Построить этапы». Точки можно потом двигать вручную.
+          </div>
+          <button class="btn secondary" type="button" style="margin-top:10px" onclick="buildSteps()">Построить этапы</button>
+        </div>
+
+        <div class="metric">
+          <label>Быстрая оценка опыта</label>
+          <div class="small-note" style="margin-bottom:10px">
+            Отметь общий уровень опыта после улучшения:
+          </div>
+          <input id="experienceLevel" class="range" type="range" min="1" max="10" value="6" />
+          <div class="metric-value" style="margin-top:10px">
+            <span class="small-note">Слабее</span>
+            <span class="mono" id="expLabel">6 / 10</span>
+            <span class="small-note">Сильнее</span>
+          </div>
+          <div class="small-note">
+            Этот ответ автоматически попадает в финальную визуализацию результата.
+          </div>
+        </div>
+      </div>
+
+      <div class="canvas-box" style="margin-top:14px">
         <div class="canvas-tools">
           <button class="btn primary" type="button" onclick="addPoint()">Добавить точку</button>
           <button class="btn secondary" type="button" onclick="resetPoints()">Сбросить точки</button>
           <button class="btn ghost" type="button" onclick="addMoodLine()">Показать улучшение</button>
-          <span class="hint">Подсказка: можно использовать этот блок как схему или просто подробно описать её ниже.</span>
+          <span class="hint">Точки можно перетаскивать. Это основной график для дальнейшей работы.</span>
         </div>
         <svg id="chart" viewBox="0 0 1000 420" width="100%" height="420" style="display:block;border-radius:18px;background:linear-gradient(180deg,#ffffff,#f7f9ff)">
           <defs>
@@ -236,6 +284,7 @@
           <g id="labels"></g>
         </svg>
       </div>
+
       <div style="margin-top:14px">
         <label for="chartNote">Комментарий к карте</label>
         <textarea id="chartNote" placeholder="Например: Используйте данные из прошлых тестирований. Отметьте точку, где пользователь начинает испытывать негатив, и объясните, почему это важно исправить."></textarea>
@@ -284,6 +333,13 @@
             <label>Планируемый результат</label>
             <textarea placeholder="Покажи, как эмоция пользователя станет лучше и где на графике это видно."></textarea>
           </div>
+          <div>
+            <label>Быстрая визуализация результата</label>
+            <input type="range" min="1" max="10" value="7" class="range caseExp" />
+          </div>
+          <svg class="spark" viewBox="0 0 400 120">
+            <path d="M20 90 L80 78 L140 82 L200 58 L260 44 L320 26 L380 20" fill="none" stroke="#20c997" stroke-width="5" stroke-linecap="round"/>
+          </svg>
         </div>
       </article>
 
@@ -323,6 +379,13 @@
             <label>Планируемый результат</label>
             <textarea placeholder="Покажи, как эмоция пользователя станет лучше и где на графике это видно."></textarea>
           </div>
+          <div>
+            <label>Быстрая визуализация результата</label>
+            <input type="range" min="1" max="10" value="6" class="range caseExp" />
+          </div>
+          <svg class="spark" viewBox="0 0 400 120">
+            <path d="M20 86 L90 84 L150 72 L210 68 L270 50 L330 36 L380 24" fill="none" stroke="#5b6cff" stroke-width="5" stroke-linecap="round"/>
+          </svg>
         </div>
       </article>
 
@@ -362,6 +425,13 @@
             <label>Планируемый результат</label>
             <textarea placeholder="Покажи, как эмоция пользователя станет лучше и где на графике это видно."></textarea>
           </div>
+          <div>
+            <label>Быстрая визуализация результата</label>
+            <input type="range" min="1" max="10" value="8" class="range caseExp" />
+          </div>
+          <svg class="spark" viewBox="0 0 400 120">
+            <path d="M20 95 L80 92 L150 76 L220 62 L290 44 L340 28 L380 18" fill="none" stroke="#ff6b6b" stroke-width="5" stroke-linecap="round"/>
+          </svg>
         </div>
       </article>
     </section>
@@ -399,6 +469,10 @@
     const trend = document.getElementById('trend');
     const points = document.getElementById('points');
     const labels = document.getElementById('labels');
+    const stepsCount = document.getElementById('stepsCount');
+    const stepsLabel = document.getElementById('stepsLabel');
+    const experienceLevel = document.getElementById('experienceLevel');
+    const expLabel = document.getElementById('expLabel');
 
     let samplePoints = [
       {x:130, y:260, name:'Старт', color:'#ff6b6b'},
@@ -408,6 +482,10 @@
       {x:880, y:110, name:'Финал', color:'#5b6cff'},
     ];
 
+    let dragged = null;
+    let offsetX = 0;
+    let offsetY = 0;
+
     function render(){
       points.innerHTML = '';
       labels.innerHTML = '';
@@ -416,6 +494,9 @@
         const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
         c.setAttribute('cx', p.x); c.setAttribute('cy', p.y); c.setAttribute('r', 11);
         c.setAttribute('fill', p.color); c.setAttribute('stroke', '#fff'); c.setAttribute('stroke-width', '4');
+        c.style.cursor = 'grab';
+        c.addEventListener('pointerdown', startDrag);
+        c.dataset.index = i;
         points.appendChild(c);
 
         const t = document.createElementNS('http://www.w3.org/2000/svg','text');
@@ -428,6 +509,37 @@
         labels.appendChild(t);
       });
     }
+
+    function svgPoint(e){
+      const pt = svg.createSVGPoint();
+      pt.x = e.clientX;
+      pt.y = e.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+
+    function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+    function startDrag(e){
+      dragged = Number(e.target.dataset.index);
+      const p = svgPoint(e);
+      offsetX = p.x - samplePoints[dragged].x;
+      offsetY = p.y - samplePoints[dragged].y;
+      e.target.setPointerCapture(e.pointerId);
+      e.target.style.cursor = 'grabbing';
+    }
+
+    svg.addEventListener('pointermove', (e)=>{
+      if(dragged === null) return;
+      const p = svgPoint(e);
+      samplePoints[dragged].x = clamp(p.x - offsetX, 110, 930);
+      samplePoints[dragged].y = clamp(p.y - offsetY, 70, 340);
+      samplePoints = samplePoints.sort((a,b)=>a.x-b.x);
+      render();
+    });
+
+    svg.addEventListener('pointerup', ()=>{
+      dragged = null;
+    });
 
     function addPoint(){
       const x = 140 + Math.round(Math.random()*760);
@@ -463,6 +575,27 @@
       render();
     }
 
+    function buildSteps(){
+      const n = Number(stepsCount.value);
+      stepsLabel.textContent = n;
+      const xs = [130, 260, 390, 520, 650, 780, 890, 930].slice(0, n);
+      samplePoints = xs.map((x, i)=>({
+        x,
+        y:clamp(280 - (i*18) + (i%2===0 ? 12 : -10), 80, 330),
+        name:`Этап ${i+1}`,
+        color:i===Math.floor(n/2) ? '#ff4d8d' : (i > Math.floor(n/2) ? '#20c997' : '#5b6cff')
+      }));
+      render();
+    }
+
+    stepsCount.addEventListener('input', ()=>{
+      stepsLabel.textContent = stepsCount.value;
+    });
+
+    experienceLevel.addEventListener('input', ()=>{
+      expLabel.textContent = `${experienceLevel.value} / 10`;
+    });
+
     function collectText(){
       const fields = [
         ['Название проекта', 'projectName'],
@@ -481,6 +614,8 @@
       txt += `- Три кейса: ${document.getElementById('rule2').checked ? 'да' : 'нет'}\n`;
       txt += `- Сравнение эмоции на графике: ${document.getElementById('rule3').checked ? 'да' : 'нет'}\n`;
       txt += `- Финал урока представлен: ${document.getElementById('present').checked ? 'да' : 'нет'}\n`;
+      txt += `- Количество этапов: ${stepsCount.value}\n`;
+      txt += `- Общий уровень опыта: ${experienceLevel.value}/10\n`;
       return txt;
     }
 
@@ -497,6 +632,7 @@
     }
 
     render();
+    buildSteps();
   </script>
 </body>
 </html>
